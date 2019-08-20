@@ -2,7 +2,93 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+
+commands:
+  guard_directories:
+    description: 'Stop the job when there are no active changes in the branch. However, the master branch not affected.'
+    parameters:
+      exclude:
+        description: 'Prevent the test from stopping if changes are found in this directory'
+        type: string
+    steps:
+      - run:
+          command: |
+            ROOT_BRANCH="master"
+
+            if [ $CIRCLE_BRANCH = $ROOT_BRANCH ]; then
+              exit 0
+            fi
+
+            # CIRCLE_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+            # CIRCLE_WORKING_DIRECTORY=$PWD
+            ROOT_COMMIT=$(git merge-base "${CIRCLE_BRANCH}" "${ROOT_BRANCH}")
+            echo "Checking for changes in branch ${CIRCLE_BRANCH}"
+            echo " - Excluding << parameters.exclude >>"
+            echo " - Git root ${CIRCLE_WORKING_DIRECTORY}/*"
+            echo " - Initial commit ${ROOT_COMMIT}/*"
+            # ROOT_COMMIT=$(git merge-base remotes/origin/"${CIRCLE_BRANCH}" "${ROOT_BRANCH}")
+            # echo "current branch -> ${CIRCLE_BRANCH}"
+            # Tests all root directories
+            for file in $PWD/*/
+            do
+              FILE_NAME=$(basename $file)
+              if [[ ! " << parameters.exclude >> " =~ " ${FILE_NAME} " ]]; then
+                echo " -- Checking ${FILE_NAME}"
+                # MASTER_LAST_COMMIT=$(git log -1 origin/"${ROOT_BRANCH}" --format=format:%H --full-diff "${file}")
+                ROOT_FILE_HASH=$(git log -1 "${ROOT_COMMIT}" --format=format:%H --full-diff "${file}")
+                CURRENT_FILE_HASH=$(git log -1 --format=format:%H --full-diff "${file}")
+                if [ ! $ROOT_FILE_HASH = $CURRENT_FILE_HASH ]; then
+                  echo " --- ${FILE_NAME}/ has changes. Proceeding to the tests..."
+                  exit 0
+                fi
+              fi
+            done
+
+            echo "!! No relevant file changes in the current branch; stopping tests. !!"
+            # No changes. Halting step
+            circleci-agent step halt
+
+  require_active_changes:
+    parameters:
+      require:
+        description: 'The test will stop if there are no changes in this directory'
+        type: string
+    steps:
+      - run:
+          command: |
+            ROOT_BRANCH="master"
+
+            if [ $CIRCLE_BRANCH = $ROOT_BRANCH ]; then
+              exit 0
+            fi
+
+            ROOT_COMMIT=$(git merge-base "${CIRCLE_BRANCH}" "${ROOT_BRANCH}")
+            echo "Checking for changes in branch ${CIRCLE_BRANCH}"
+            echo " - Required << parameters.require >>"
+            echo " - Git root ${CIRCLE_WORKING_DIRECTORY}/*"
+            echo " - Initial commit ${ROOT_COMMIT}/*"
+            # ROOT_COMMIT=$(git merge-base remotes/origin/"${CIRCLE_BRANCH}" "${ROOT_BRANCH}")
+            # echo "current branch -> ${CIRCLE_BRANCH}"
+            # Tests all root directories
+            for file in $PWD/*/
+            do
+              FILE_NAME=$(basename $file)
+              if [[ " << parameters.require >> " =~ " ${FILE_NAME} " ]]; then
+                echo " -- Checking ${FILE_NAME}"
+                # MASTER_LAST_COMMIT=$(git log -1 origin/"${ROOT_BRANCH}" --format=format:%H --full-diff "${file}")
+                ROOT_FILE_HASH=$(git log -1 "${ROOT_COMMIT}" --format=format:%H --full-diff "${file}")
+                CURRENT_FILE_HASH=$(git log -1 --format=format:%H --full-diff "${file}")
+                if [ ! $ROOT_FILE_HASH = $CURRENT_FILE_HASH ]; then
+                  echo " --- ${FILE_NAME}/ has changes. Proceeding to the tests..."
+                  exit 0
+                fi
+              fi
+            done
+
+            echo "!! No relevant file changes in the current branch; stopping tests. !!"
+            # No changes. Halting step
+            circleci-agent step halt
 jobs:
   build:
     docker:
@@ -18,20 +104,23 @@ jobs:
 
     steps:
       - checkout
-
+      - require_active_changes:
+          require: 'tools'
+      - guard_directories:
+          exclude: 'docs'
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      # - restore_cache:
+      #     keys:
+      #       - v1-dependencies-{{ checksum "package.json" }}
+      #       # fallback to using the latest cache if no exact match is found
+      #       - v1-dependencies-
 
       - run: yarn install
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
       - run: echo "Done!"
