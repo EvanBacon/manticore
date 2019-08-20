@@ -1,0 +1,2 @@
+# manticore
+ monorepo CI tests
