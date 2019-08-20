@@ -1,3 +1,3 @@
-# Manticore
+# Manticore Docs
 
 hey
