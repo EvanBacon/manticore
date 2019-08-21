@@ -2,7 +2,95 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+
+commands:
+  halt_if_unchanged_except:
+    description: 'Stop the job when there are no active changes in the branch. However, the master branch not affected.'
+    parameters:
+      exclude:
+        description: 'Prevent the job from stopping if changes are found in this directory'
+        type: string
+    steps:
+      - run:
+          name: Stop the job if only << parameters.exclude >> was changed
+          command: |
+            ROOT_BRANCH="master"
+
+            set -e
+
+            if [ $CIRCLE_BRANCH = $ROOT_BRANCH ]; then
+              echo " ▶️ Running on ${ROOT_BRANCH}. Continuing the job..."
+              exit 0
+            fi
+
+            BASE_COMMIT=$(git merge-base remotes/origin/"${CIRCLE_BRANCH}" remotes/origin/"${ROOT_BRANCH}")
+            echo "Checking for changes in branch ${CIRCLE_BRANCH}"
+            echo " - Excluding << parameters.exclude >>"
+            echo " - Git repository root at ${CIRCLE_WORKING_DIRECTORY}"
+            echo " - Base ${ROOT_BRANCH} commit ${BASE_COMMIT}"
+            # Test all top-level directories
+            for file in $PWD/*/
+            do
+              FILE_NAME=$(basename $file)
+              if [[ ! " << parameters.exclude >> " =~ " ${FILE_NAME} " ]]; then
+                echo " -- Checking ${FILE_NAME}"
+                BASE_FILE_HASH=$(git log -1 "${BASE_COMMIT}" --format=format:%H --full-diff "${file}")
+                CURRENT_FILE_HASH=$(git log -1 --format=format:%H --full-diff "${file}")
+                if [ ! $BASE_FILE_HASH = $CURRENT_FILE_HASH ]; then
+                  echo " --- ▶️ ${FILE_NAME}/ has been modified on this branch. Continuing the job..."
+                  exit 0
+                fi
+              fi
+            done
+
+            echo "⏹ No relevant file changes in the current branch; stopping tests."
+            # No changes. Halting step
+            echo 'user-halt' > "$CIRCLE_INTERNAL_SCRATCH/HALT_TASK"
+  halt_if_unchanged:
+    parameters:
+      require:
+        description: 'The job will stop if there are no changes in this directory'
+        type: string
+    steps:
+      - run:
+          name: Require the << parameters.require >> directory to have changes
+          command: |
+            ROOT_BRANCH="master"
+
+            if [ $CIRCLE_BRANCH = $ROOT_BRANCH ]; then
+              echo " ▶️ Running on ${ROOT_BRANCH}. Continuing the job..."
+              exit 0
+            fi
+
+            BASE_COMMIT=$(git merge-base HEAD remotes/origin/"${ROOT_BRANCH}")
+            echo "Checking for changes in branch ${CIRCLE_BRANCH}"
+            echo " - Required << parameters.require >>"
+            echo " - Git repository root at ${CIRCLE_WORKING_DIRECTORY}"
+            echo " - Base ${ROOT_BRANCH} commit ${BASE_COMMIT}"
+            # Test all top-level directories
+            for file in $PWD/*/
+            do
+              FILE_NAME=$(basename $file)
+              if [[ " << parameters.require >> " =~ " ${FILE_NAME} " ]]; then
+                echo " -- Checking ${FILE_NAME}"
+                BASE_FILE_HASH=$(git log -1 "${BASE_COMMIT}" --format=format:%H --full-diff "${file}")
+                CURRENT_FILE_HASH=$(git log -1 --format=format:%H --full-diff "${file}")
+                if [ ! $BASE_FILE_HASH = $CURRENT_FILE_HASH ]; then
+                  echo " --- ▶️ ${FILE_NAME}/ has been modified on this branch. Continuing the job..."
+                  exit 0
+                fi
+              fi
+            done
+
+            echo "⏹ No relevant file changes in the current branch; stopping tests."
+
+            # circleci-agent is not available with nix executors
+            if command -v circleci-agent >/dev/null; then
+              circleci-agent task halt
+            else
+             echo 'user-halt' > "$CIRCLE_INTERNAL_SCRATCH/HALT_TASK"
+            fi
 jobs:
   build:
     docker:
@@ -18,20 +106,23 @@ jobs:
 
     steps:
       - checkout
-
+      - halt_if_unchanged:
+          require: 'tools'
+      - halt_if_unchanged_except:
+          exclude: 'docs'
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      # - restore_cache:
+      #     keys:
+      #       - v1-dependencies-{{ checksum "package.json" }}
+      #       # fallback to using the latest cache if no exact match is found
+      #       - v1-dependencies-
 
       - run: yarn install
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
       - run: echo "Done!"
