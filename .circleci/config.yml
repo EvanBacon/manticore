@@ -99,4 +99,4 @@ jobs:
     shell: /bin/bash -leo pipefail
     steps:
       - checkout
-      - run: set +e; exit 0
+      - run: set +e; exit 0; echo "ide"
