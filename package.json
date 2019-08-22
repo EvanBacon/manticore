@@ -4,6 +4,7 @@
   "private": true,
   "author": "Evan Bacon",
   "scripts": {
+    "test": "echo tested",
     "local-ci-run:build": "circleci config process .circleci/config.yml > process.yml && circleci local execute -c process.yml --job build",
     "local-ci-run:docs": "circleci config process .circleci/config.yml > process.yml && circleci local execute -c process.yml --job docs"
   }
