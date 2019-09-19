@@ -71,7 +71,7 @@ async function prMonorepoRepoLabeler() {
   for (const packageInfo of packageNames) {
     console.log(`labeling package: ${packageInfo.name}`);
 
-    const packageLabel = `📦 ${packageInfo.name}`;
+    const packageLabel = `:package: ${packageInfo.name}`;
 
     helpers.addLabel(
       octokit,
