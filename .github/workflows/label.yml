@@ -1,13 +1,17 @@
 on: pull_request
-name: Label Packages
+name: Label
 jobs:
   label:
-    name: Label Packages
+    name: Packages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Label PR Monorepos
-        uses: adamzolyak/monorepo-pr-labeler-action@master
+
+      - name: Install
+        run: cd packages/labeler && yarn install --frozen-lockfile
+
+      - name: Assigning Labels
+        run: cd packages/labeler && yarn start
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BASE_DIRS: 'packages'
