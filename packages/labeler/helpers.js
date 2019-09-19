@@ -86,6 +86,7 @@ module.exports.addLabel = function(
     owner: eventOwner,
     repo: eventRepo,
     name: label,
+    current_name: label,
     color: 'b01f26',
     description,
   });
