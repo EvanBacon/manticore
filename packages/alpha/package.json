@@ -1,5 +1,6 @@
 {
   "name": "@manticore/alpha",
+  "description": "an alpha lib",
   "version": "1.0.0",
   "private": true,
   "author": "Evan Bacon"
