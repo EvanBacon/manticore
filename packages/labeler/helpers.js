@@ -76,18 +76,18 @@ module.exports.addLabel = function(
       labels: [label], // ['Label 1']
     })
     .then(({ data, headers, status }) => {
+      console.log(data);
       // handle data
+      octokit.issues.updateLabel({
+        owner: eventOwner,
+        repo: eventRepo,
+        name: label,
+        current_name: label,
+        color: 'b01f26',
+        description,
+      });
     })
     .catch(err => {
       console.log(err);
     });
-
-  octokit.issues.updateLabel({
-    owner: eventOwner,
-    repo: eventRepo,
-    name: label,
-    current_name: label,
-    color: 'b01f26',
-    description,
-  });
 };
