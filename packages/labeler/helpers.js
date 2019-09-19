@@ -1,5 +1,5 @@
 const fs = require('fs');
-const pkgUp = require('pkg-up');
+const { sync: pkgUp } = require('pkg-up');
 
 module.exports.readFilePromise = function(filename) {
   return new Promise((resolve, reject) => {
@@ -50,8 +50,14 @@ module.exports.getMonorepo = function(baseDirectories, filePath) {
   var regex = new RegExp(regexPattern);
   var found = filePath.match(regex);
 
-  if (found) return found[1];
-  else return false;
+  if (found) {
+    const packagePath = pkgUp({ cwd: filePath });
+    console.log('getMonorepo', filePath, packagePath);
+    if (!packagePath) return found[0];
+    return packagePath;
+  } else {
+    return false;
+  }
 };
 
 module.exports.addLabel = function(

@@ -1,5 +1,6 @@
 console.log('started nodejs...');
 
+const fs = require('fs');
 const path = require('path');
 const helpers = require('./helpers');
 const _ = require('underscore');
@@ -48,19 +49,26 @@ async function prMonorepoRepoLabeler() {
 
   const packageNames = [];
 
-  for (const package of prFilesReposUnique) {
+  console.log('parse packages: ', prFilesReposUnique);
+  for (const packagePath of prFilesReposUnique) {
     try {
-      const pkg = require(path.resolve(package, 'package.json'));
-      if (pkg.name && pkg.name.length) {
-        packageNames.push({ name: pkg.name, description: pkg.description });
+      const packageJson = require(packagePath);
+      if (packageJson && packageJson.name && packageJson.name.length) {
+        packageNames.push({
+          name: packageJson.name,
+          description: packageJson.description,
+        });
+      } else {
+        packageNames.push({ name: packagePath });
       }
-    } catch {
-      packageNames.push({ name: package });
+    } catch (error) {
+      packageNames.push({ name: packagePath });
     }
   }
 
+  console.log('assigning packages: ', packageNames);
   //add label for each monorepo repo
-  for (const packageInfo of prFilesReposUnique) {
+  for (const packageInfo of packageNames) {
     console.log(`labeling package: ${packageInfo.name}`);
 
     const packageLabel = `📦 pkg: ${packageInfo.name}`;
