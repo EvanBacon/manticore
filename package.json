@@ -3,8 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "author": "Evan Bacon",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "postbootstrap": "lerna run prepare --stream",
     "local-ci-run:build": "circleci config process .circleci/config.yml > process.yml && circleci local execute -c process.yml --job build",
     "local-ci-run:docs": "circleci config process .circleci/config.yml > process.yml && circleci local execute -c process.yml --job docs"
+  },
+  "dependencies": {
+    "lerna": "3.4.1"
   }
 }
