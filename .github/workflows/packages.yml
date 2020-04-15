@@ -75,10 +75,10 @@ jobs:
           path: |
             *
           key: n-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-      - name: Attach Workspace
-        uses: actions/download-artifact@master
-        with:
-          name: dependencies-${{ matrix.os }}-${{ matrix.node-version }}
+      # - name: Attach Workspace
+      #   uses: actions/download-artifact@master
+      #   with:
+      #     name: dependencies-${{ matrix.os }}-${{ matrix.node-version }}
 
       - name: Test ${{ matrix.package }}
         run: cd packages/${{ matrix.package }} && "$GITHUB_WORKSPACE/tools/module-scripts-check-packages.sh"

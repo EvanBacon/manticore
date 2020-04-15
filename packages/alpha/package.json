@@ -2,5 +2,11 @@
   "name": "@manticore/alpha",
   "version": "1.0.0",
   "private": true,
-  "author": "Evan Bacon"
+  "author": "Evan Bacon",
+  "dependencies": {
+    "pod-install": "0.0.0-alpha.8"
+  },
+  "scripts": {
+    "test": "pod-install --help"
+  }
 }
