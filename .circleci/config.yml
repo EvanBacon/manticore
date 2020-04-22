@@ -6,10 +6,10 @@ version: 2.1
 
 commands:
   halt_if_unchanged_except:
-    description: 'Stop the job when there are no active changes in the branch. However, the master branch not affected.'
+    description: "Stop the job when there are no active changes in the branch. However, the master branch not affected."
     parameters:
       exclude:
-        description: 'Prevent the job from stopping if changes are found in this directory'
+        description: "Prevent the job from stopping if changes are found in this directory"
         type: string
     steps:
       - run:
@@ -50,7 +50,7 @@ commands:
   halt_if_unchanged:
     parameters:
       require:
-        description: 'The job will stop if there are no changes in this directory'
+        description: "The job will stop if there are no changes in this directory"
         type: string
     steps:
       - run:
@@ -107,9 +107,9 @@ jobs:
     steps:
       - checkout
       - halt_if_unchanged:
-          require: 'tools'
+          require: "tools"
       - halt_if_unchanged_except:
-          exclude: 'docs'
+          exclude: "docs"
       # Download and cache dependencies
       # - restore_cache:
       #     keys:

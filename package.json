@@ -10,9 +10,12 @@
     "bootstrap": "lerna bootstrap",
     "postbootstrap": "lerna run prepare --stream",
     "local-ci-run:build": "circleci config process .circleci/config.yml > process.yml && circleci local execute -c process.yml --job build",
-    "local-ci-run:docs": "circleci config process .circleci/config.yml > process.yml && circleci local execute -c process.yml --job docs"
+    "local-ci-run:docs": "circleci config process .circleci/config.yml > process.yml && circleci local execute -c process.yml --job docs",
+    "test:coverage": "lerna run --parallel test:coverage"
   },
   "dependencies": {
-    "lerna": "^3.4.1"
+    "lerna": "^3.4.1",
+    "codecov": "^3.6.5",
+    "jest": "^25.2.6"
   }
 }

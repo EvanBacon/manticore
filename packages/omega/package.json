@@ -8,6 +8,7 @@
     "pod-install": "0.0.0-alpha.8"
   },
   "scripts": {
-    "test": "pod-install --help"
+    "test": "jest",
+    "test:coverage": "jest --coverage && codecov"
   }
 }

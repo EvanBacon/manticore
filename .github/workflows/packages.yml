@@ -26,6 +26,28 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Cache node_modules
+        id: cache_node_modules
+        uses: actions/cache@master
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+      - if: steps.cache_node_modules.outputs.cache-hit != 'true'
+        run: yarn
+      - name: Cache build
+        id: cache_build
+        uses: actions/cache@master
+        with:
+          path: |
+            build/
+            */*/build/
+            */*/*.tsbuildinfo
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+      - if: steps.cache_build.outputs.cache-hit != 'true'
+        run: yarn lerna bootstrap
+
       - name: cache repo
         id: cache
         uses: actions/cache@eb78578266b7cec649ab65b6f1534bd6040c838b
@@ -80,7 +102,11 @@ jobs:
       #   with:
       #     name: dependencies-${{ matrix.os }}-${{ matrix.node-version }}
 
-      - name: Test ${{ matrix.package }}
-        run: cd packages/${{ matrix.package }} && "$GITHUB_WORKSPACE/tools/module-scripts-check-packages.sh"
+      # - name: Test ${{ matrix.package }}
+      #   run: cd packages/${{ matrix.package }} && "$GITHUB_WORKSPACE/tools/module-scripts-check-packages.sh"
+      #   env:
+      #     CI: true
+      - name: Coverage ${{ matrix.package }}
+        run: cd packages/${{ matrix.package }} && yarn test --coverage && codecov
         env:
           CI: true

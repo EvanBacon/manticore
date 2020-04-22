@@ -1,12 +1,14 @@
 {
   "name": "@manticore/alpha",
   "version": "1.0.0",
+  "main": "src",
   "private": true,
   "author": "Evan Bacon",
   "dependencies": {
-    "pod-install": "0.0.0-alpha.8"
+    "pod-install": "latest"
   },
   "scripts": {
-    "test": "pod-install --help"
+    "test": "jest",
+    "test:coverage": "jest --coverage && codecov"
   }
 }
