@@ -2,7 +2,6 @@ name: Test Package
 on: [push]
 
 jobs:
-
   test:
     strategy:
       matrix:
@@ -37,10 +36,12 @@ jobs:
         run: cd packages/${{ matrix.package }} && yarn test --coverage
         env:
           CI: true
+      - run: echo "::set-env name=PKG_FLAG_NAME::$(${{ matrix.package }} | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')"
       - uses: codecov/codecov-action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          file: ./packages/${{ matrix.package }}/coverage/clover.xml # optional
-          flags: ${{ matrix.package }} # optional
-          fail_ci_if_error: true # optional (default = false)
-
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./packages/${{ matrix.package }}/coverage/clover.xml
+          flags: "$PKG_FLAG"
+          fail_ci_if_error: true
+        env:
+          PKG_FLAG: $(${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g')
