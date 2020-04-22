@@ -83,6 +83,7 @@ jobs:
           path: |
             *
           key: n-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - run: yarn
       # - name: Attach Workspace
       #   uses: actions/download-artifact@master
       #   with:
