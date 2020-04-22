@@ -36,18 +36,18 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
       - if: steps.cache_node_modules.outputs.cache-hit != 'true'
         run: yarn
-      - name: Cache build
-        id: cache_build
-        uses: actions/cache@master
-        with:
-          path: |
-            build/
-            */*/build/
-            */*/*.tsbuildinfo
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-      - if: steps.cache_build.outputs.cache-hit != 'true'
-        run: yarn lerna bootstrap
-
+      # - name: Cache build
+      #   id: cache_build
+      #   uses: actions/cache@master
+      #   with:
+      #     path: |
+      #       build/
+      #       */*/build/
+      #       */*/*.tsbuildinfo
+      #     key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+      # - if: steps.cache_build.outputs.cache-hit != 'true'
+      #   run: yarn lerna bootstrap
+      - run: yarn lerna bootstrap
       # Save state
       # - name: Persist to Workspace
       #   uses: actions/upload-artifact@master
