@@ -36,12 +36,14 @@ jobs:
         run: cd packages/${{ matrix.package }} && yarn test --coverage
         env:
           CI: true
-      - run: echo "::set-env name=PKG_FLAG_NAME::$(${{ matrix.package }} | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')"
+      - run: echo $PKG_FLAG
+        env:
+          PKG_FLAG: $(echo ${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g')
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./packages/${{ matrix.package }}/coverage/clover.xml
-          flags: "$PKG_FLAG"
+          flags: $PKG_FLAG
           fail_ci_if_error: true
         env:
-          PKG_FLAG: $(${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g')
+          PKG_FLAG: $(echo ${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g')
