@@ -15,4 +15,4 @@ coverage:
 comment:
   behavior: default
   require_changes: false
-  layout: "header, diff"
+  layout: "header, flags, diff"
