@@ -2,35 +2,7 @@ name: Test Package
 on: [push]
 
 jobs:
-  dependencies:
-    strategy:
-      matrix:
-        # Run tests with all of these node versions/systems :]
-        node-version: [10.x]
-        # os: [ubuntu-latest, windows-latest, macOS-latest]
-        os: [ubuntu-latest]
-    name: Setup Node ${{ matrix.node-version }} (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@master
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache node_modules
-        id: cache_node_modules
-        uses: actions/cache@master
-        with:
-          path: |
-            node_modules
-            */*/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-
-      - run: yarn lerna bootstrap
   test:
     strategy:
       matrix:
@@ -39,7 +11,6 @@ jobs:
         node-version: [10.x]
         # os: [ubuntu-latest, windows-latest, macOS-latest]
         os: [ubuntu-latest]
-    needs: dependencies
     name: ${{ matrix.package }} with Node ${{ matrix.node-version }} (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     steps:
@@ -60,8 +31,7 @@ jobs:
             node_modules
             */*/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-      
-      - run: yarn
+      - run: yarn lerna bootstrap
 
       - name: Coverage ${{ matrix.package }}
         run: cd packages/${{ matrix.package }} && yarn test --coverage
