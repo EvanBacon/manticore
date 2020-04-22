@@ -93,6 +93,6 @@ jobs:
       #   env:
       #     CI: true
       - name: Coverage ${{ matrix.package }}
-        run: cd packages/${{ matrix.package }} && test:coverage
+        run: cd packages/${{ matrix.package }} && yarn test:coverage
         env:
           CI: true
