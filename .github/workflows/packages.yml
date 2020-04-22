@@ -48,20 +48,6 @@ jobs:
       - if: steps.cache_build.outputs.cache-hit != 'true'
         run: yarn lerna bootstrap
 
-      - name: cache repo
-        id: cache
-        uses: actions/cache@eb78578266b7cec649ab65b6f1534bd6040c838b
-        with:
-          path: |
-            *
-          key: n-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-      - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn
-
-      # Setup Learna - run manually so we don't run yarn more than needed
-      - run: yarn lerna bootstrap && yarn lerna run prepare --stream
-
       # Save state
       # - name: Persist to Workspace
       #   uses: actions/upload-artifact@master
@@ -107,6 +93,6 @@ jobs:
       #   env:
       #     CI: true
       - name: Coverage ${{ matrix.package }}
-        run: cd packages/${{ matrix.package }} && yarn test --coverage && codecov
+        run: cd packages/${{ matrix.package }} && test:coverage
         env:
           CI: true
