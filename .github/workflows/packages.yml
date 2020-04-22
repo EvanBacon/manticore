@@ -46,4 +46,4 @@ jobs:
           flags: $PKG_FLAG
           fail_ci_if_error: true
         env:
-          PKG_FLAG: $(echo ${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g')
+          PKG_FLAG: echo ${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g'
