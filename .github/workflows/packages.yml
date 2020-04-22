@@ -5,7 +5,7 @@ jobs:
   test:
     strategy:
       matrix:
-        package: [alpha, omega]
+        package: [alpha]
         # Run tests with all of these node versions/systems :]
         node-version: [10.x]
         # os: [ubuntu-latest, windows-latest, macOS-latest]
@@ -36,9 +36,10 @@ jobs:
         run: cd packages/${{ matrix.package }} && yarn test --coverage
         env:
           CI: true
-      - run: echo "$PKG_FLAG"
-        env:
-          PKG_FLAG: echo ${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g'
+      - name: Get Test Flag Name
+        id: cov-flag-name
+        run: echo "::set-output name=flag::$(echo ${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g')"
+      - run: echo ${{ steps.cov-flag-name.outputs.flag }}
       # - uses: codecov/codecov-action@v1
       #   with:
       #     token: ${{ secrets.CODECOV_TOKEN }}
