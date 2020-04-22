@@ -9,6 +9,6 @@
   },
   "scripts": {
     "test": "jest",
-    "test:coverage": "jest --coverage && codecov"
+    "test:coverage": "jest --coverage"
   }
 }
