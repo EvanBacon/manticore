@@ -5,7 +5,7 @@
 # instead of actions/cache@1. Support for monorepos will be available in actions/cache@2.
 
 name: Test Package
-on: [pull_request]
+on: [pull_request, push]
 
 jobs:
   dependencies:
