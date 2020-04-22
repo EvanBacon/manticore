@@ -43,7 +43,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./packages/${{ matrix.package }}/coverage/clover.xml
-          flags: $PKG_FLAG
+          flags: "$PKG_FLAG"
           fail_ci_if_error: true
         env:
           PKG_FLAG: echo ${{ matrix.package }} | perl -pe 's/(^|-)./uc($&)/ge;s/-//g'
