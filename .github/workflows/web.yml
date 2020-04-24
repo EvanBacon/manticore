@@ -29,18 +29,18 @@ jobs:
       - name: Build Website
         working-directory: ./apps/native-component-list-1
         run: yarn expo build:web --no-pwa
-      # - name: Publish Website
-      #   working-directory: ./apps/native-component-list-1
-      #   env:
-      #     ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
-      #     BUILD_ID: ${{ github.sha }}
-      #   run: >
-      #     npx now deploy web-build
-      #     --build-env BUILD_ID=${BUILD_ID}
-      #     --no-clipboard
-      #     --token ${ZEIT_TOKEN}
-      #     > deploy-url.txt
-      #       - name: Set deploy url to env variable
+      - name: Publish Website
+        working-directory: ./apps/native-component-list-1
+        env:
+          ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
+          BUILD_ID: ${{ github.sha }}
+        run: >
+          npx now deploy web-build
+          --build-env BUILD_ID=${BUILD_ID}
+          --no-clipboard
+          --token ${ZEIT_TOKEN}
+          > deploy-url.txt
+      # - name: Set deploy url to env variable
       #   run: echo "::set-env name=ZEIT_DEPLOY::$(cat deploy-url.txt)"
       # - name: Alias with PR number
       #   working-directory: ./apps/native-component-list-1
