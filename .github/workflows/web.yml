@@ -23,12 +23,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
       # - name: Pull LFS files
       #   run: git lfs pull
-      # - name: Yarn
-      #   run: yarn
-      #   working-directory: ./apps/native-component-list-1
-      # - name: Build Website
-      #   working-directory: ./apps/native-component-list-1
-      #   run: expo build:web --no-pwa
+      - name: Yarn
+        run: yarn
+        working-directory: ./apps/native-component-list-1
+      - name: Build Website
+        working-directory: ./apps/native-component-list-1
+        run: expo build:web --no-pwa
       # - name: Publish Website
       #   working-directory: ./apps/native-component-list-1
       #   env:
