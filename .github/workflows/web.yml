@@ -37,7 +37,6 @@ jobs:
         run: >
           npx now deploy web-build
           --env NODE_ENV=production \
-          --public \
           --no-clipboard
           --token=${ZEIT_TOKEN} \
           > deploy-url.txt
