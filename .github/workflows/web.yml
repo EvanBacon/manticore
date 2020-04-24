@@ -1,10 +1,12 @@
 name: Publish Expo Web
 
-on:
-  push:
-    branches: [master]
-  pull_request:
-    types: [opened, synchronize]
+on: [push]
+
+# on:
+#   push:
+#     branches: [master]
+#   pull_request:
+#     types: [opened, synchronize]
     # paths:
     #   - /apps/
     #   - /packages/
