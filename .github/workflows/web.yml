@@ -28,7 +28,7 @@ jobs:
         working-directory: ./apps/native-component-list-1
       - name: Build Website
         working-directory: ./apps/native-component-list-1
-        run: expo build:web --no-pwa
+        run: yarn expo build:web --no-pwa
       # - name: Publish Website
       #   working-directory: ./apps/native-component-list-1
       #   env:
