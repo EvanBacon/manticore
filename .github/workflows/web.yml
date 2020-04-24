@@ -26,6 +26,8 @@ jobs:
       - name: Yarn
         run: yarn
         working-directory: ./apps/native-component-list-1
+      - name: Install Expo CLI
+        run: npm i -g expo-cli
       - name: Build Website
         working-directory: ./apps/native-component-list-1
         run: expo build:web --no-pwa
