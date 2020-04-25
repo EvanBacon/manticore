@@ -34,7 +34,7 @@ jobs:
         env:
           ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
           BUILD_ID: ${{ github.sha }}
-        run: npx now deploy web-build --env NODE_ENV=production --public --no-clipboard --token=${ZEIT_TOKEN}
+        run: npx now deploy web-build --env NODE_ENV=production --yes --public --no-clipboard --token=${ZEIT_TOKEN}
       # - name: Set deploy url to env variable
       #   run: echo "::set-env name=ZEIT_DEPLOY::$(cat deploy-url.txt)"
       # - name: Alias with PR number
