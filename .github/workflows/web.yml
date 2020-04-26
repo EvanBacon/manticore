@@ -48,4 +48,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          msg: "Web Native Component List deployed to:<br>- manticore-bacon-test-${{ github.event.number }}.now.sh"
+          msg: "Web Native Component List deployed to:<br>- <a target="_blank" href="manticore-bacon-test-${{ github.event.number }}.now.sh">manticore-bacon-test-${{ github.event.number }}.now.sh</a>"
