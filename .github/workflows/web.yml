@@ -41,10 +41,12 @@ jobs:
         working-directory: ./apps/native-component-list-1
         env:
           ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
-        run: npx now alias --token=${ZEIT_TOKEN} `cat deploy-url.txt` manticore-test-pr-${{ github.event.number }}.now.sh
+          SITE_ALIAS: manticore-test-pr-${{ github.event.number }}.now.sh
+        run: npx now alias --token=${ZEIT_TOKEN} `cat deploy-url.txt` $SITE_ALIAS
       - name: Add comment with deploy url
         uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SITE_ALIAS: manticore-test-pr-${{ github.event.number }}.now.sh
         with:
-          msg: "Web Native Component List deployed to:<br>- https://manticore-test-pr-${{ github.event.number }}.now.sh"
+          msg: "Web Native Component List deployed to:<br>- $SITE_ALIAS"
