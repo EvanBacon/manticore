@@ -49,4 +49,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SITE_ALIAS: manticore-bacon-test-${{ github.event.number }}.now.sh
         with:
-          msg: "Web Native Component List deployed to:<br>- $SITE_ALIAS"
+          msg: "Web Native Component List deployed to:<br>- ${SITE_ALIAS}"
