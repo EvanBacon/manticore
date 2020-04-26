@@ -34,17 +34,17 @@ jobs:
         env:
           ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
           BUILD_ID: ${{ github.sha }}
-        run: npx now deploy web-build --env NODE_ENV=production --confirm --public --no-clipboard --token=${ZEIT_TOKEN}
-      # - name: Set deploy url to env variable
-      #   run: echo "::set-env name=ZEIT_DEPLOY::$(cat deploy-url.txt)"
-      # - name: Alias with PR number
-      #   working-directory: ./apps/native-component-list-1
-      #   env:
-      #     ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
-      #   run: npx now alias --token=${ZEIT_TOKEN} `cat deploy-url.txt` manticore-test-pr-${{ github.event.number }}.now.sh
-      # - name: Add comment with deploy url
-      #   uses: unsplash/comment-on-pr@master
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     msg: "Web Native Component List deployed to:<br>- https://manticore-test-pr-${{ github.event.number }}.now.sh"
+        run: npx now deploy web-build --env NODE_ENV=production --confirm --public --no-clipboard --token=${ZEIT_TOKEN} > deploy-url.txt
+      - name: Set deploy url to env variable
+        run: echo "::set-env name=ZEIT_DEPLOY::$(cat deploy-url.txt)"
+      - name: Alias with PR number
+        working-directory: ./apps/native-component-list-1
+        env:
+          ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
+        run: npx now alias --token=${ZEIT_TOKEN} `cat deploy-url.txt` manticore-test-pr-${{ github.event.number }}.now.sh
+      - name: Add comment with deploy url
+        uses: unsplash/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: "Web Native Component List deployed to:<br>- https://manticore-test-pr-${{ github.event.number }}.now.sh"
